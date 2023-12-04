@@ -1,125 +1,446 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return const MaterialApp(
+      title: 'GPA Calculator',
+      home: LoginPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Login Page'),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+          children: [
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            TextField(
+              controller: passwordController,
+              decoration: const InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Check login credentials (simplified for demo)
+                if (emailController.text.isNotEmpty &&
+                    passwordController.text.isNotEmpty) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => YearSelectionPage()),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Invalid email or password'),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Login'),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class YearSelectionPage extends StatelessWidget {
+  final Map<String, dynamic> courseData = {
+    "Year1": {
+      "Spring": [
+        {"Course Title": "Introduction to Computer Science"},
+        {"Course Title": "Structured Programming Language"},
+        {"Course Title": "Structured Programming Language Sessional"},
+        {"Course Title": "English I (English Fundamentals)"},
+        {"Course Title": "Mathematics I (Differential and Integral Calculus)"}
+      ],
+      "Summer": [
+        {"Course Title": "Object-Oriented Programming I"},
+        {"Course Title": "Object-Oriented Programming I Sessional"},
+        {"Course Title": "English II (Business English)"},
+        {
+          "Course Title":
+              "Mathematics II (Matrix, Vector & Coordinate Geometry)"
+        },
+        {"Course Title": "Principles of Physics I"}
+      ],
+      "Fall": [
+        {"Course Title": "Discrete Mathematics"},
+        {"Course Title": "Electrical Engineering and Circuit Analysis"},
+        {
+          "Course Title":
+              "Electrical Engineering and Circuit Analysis Sessional"
+        },
+        {
+          "Course Title":
+              "Mathematics III (Linear Algebra, Ordinary & Partial Differentiation Equation)"
+        },
+        {"Course Title": "Principles of Physics II"}
+      ]
+    },
+    "Year2": {
+      "Spring": [
+        {"Course Title": "Data Structure"},
+        {"Course Title": "Data Structure Sessional"},
+        {"Course Title": "Digital Logic Design"},
+        {"Course Title": "Digital Logic Design Sessional"},
+        {"Course Title": "Economics"},
+        {
+          "Course Title":
+              "Mathematics IV (Complex Variable & Laplace Transform)"
+        }
+      ],
+      "Summer": [
+        {"Course Title": "Algorithms"},
+        {"Course Title": "Algorithms Sessional"},
+        {"Course Title": "Theory of Computation"},
+        {"Course Title": "Electronic Engineering"},
+        {"Course Title": "Electronic Engineering Sessional"},
+        {"Course Title": "Society & Technology"}
+      ],
+      "Fall": [
+        {"Course Title": "Database Management System"},
+        {"Course Title": "Database Management System Sessional"},
+        {"Course Title": "Digital Electronics & Pulse Techniques"},
+        {"Course Title": "Digital Electronics & Pulse Techniques Sessional"},
+        {"Course Title": "Web Programming Sessional"},
+        {"Course Title": "Industrial Management and Law"}
+      ]
+    },
+    "Year3": {
+      "Spring": [
+        {"Course Title": "Microprocessor & Assembly Language Programming"},
+        {
+          "Course Title":
+              "Microprocessor & Assembly Language Programming Sessional"
+        },
+        {"Course Title": "Computer Architecture"},
+        {"Course Title": "Data Communications"},
+        {"Course Title": "Accounting"}
+      ],
+      "Summer": [
+        {"Course Title": "Operating System"},
+        {"Course Title": "Operating System Sessional"},
+        {"Course Title": "Compiler Design"},
+        {"Course Title": "Compiler Design Sessional"},
+        {"Course Title": "Numerical Methods"},
+        {"Course Title": "Numerical Methods Sessional"}
+      ],
+      "Fall": [
+        {"Course Title": "Computer Networks"},
+        {"Course Title": "Computer Networks Sessional"},
+        {"Course Title": "State of Art Programming"},
+        {"Course Title": "State of Art Programming Sessional"},
+        {"Course Title": "Computer Peripherals and Interfacing"},
+        {"Course Title": "Computer Peripherals and Interfacing Sessional"}
+      ]
+    },
+    "Year4": {
+      "Spring": [
+        {"Course Title": "Information System Analysis & Design"},
+        {"Course Title": "Technical Writing & Seminar"},
+        {"Course Title": "Computer Graphics"},
+        {"Course Title": "Computer Graphics Sessional"},
+        {"Course Title": "Artificial Intelligence"},
+        {"Course Title": "Artificial Intelligence Sessional"}
+      ],
+      "Summer": [
+        {"Course Title": "Project & Thesis"},
+        {"Course Title": "Software Engineering"},
+        {"Course Title": "Simulation & Modeling"},
+        {"Course Title": "Simulation & Modeling Sessional"},
+        {"Course Title": "CSE425 (CSE425)"},
+        {"Course Title": "CSE426 (CSE426)"}
+      ],
+      "Fall": [
+        {"Course Title": "Project & Thesis"},
+        {"Course Title": "Mobile Application Development Sessional"},
+        {"Course Title": "CSE426 (CSE426)"},
+        {"Course Title": "CSE426 (CSE426)"}
+      ]
+    }
+  };
+
+  YearSelectionPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Year Selection'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        SemesterPage(year: 1, courseData: courseData["Year1"]),
+                  ),
+                );
+              },
+              child: const Text('1st Year'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        SemesterPage(year: 2, courseData: courseData["Year2"]),
+                  ),
+                );
+              },
+              child: const Text('2nd Year'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        SemesterPage(year: 3, courseData: courseData["Year3"]),
+                  ),
+                );
+              },
+              child: const Text('3rd Year'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        SemesterPage(year: 4, courseData: courseData["Year4"]),
+                  ),
+                );
+              },
+              child: const Text('4th Year'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SemesterPage extends StatelessWidget {
+  final int year;
+  final Map<String, dynamic> courseData;
+
+  const SemesterPage({super.key, required this.year, required this.courseData});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Semester Selection - Year $year'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CoursePage(
+                      year: year,
+                      semester: 'Spring',
+                      courses: courseData["Spring"],
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Spring Semester'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CoursePage(
+                      year: year,
+                      semester: 'Summer',
+                      courses: courseData["Summer"],
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Summer Semester'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CoursePage(
+                      year: year,
+                      semester: 'Fall',
+                      courses: courseData["Fall"],
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Fall Semester'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CoursePage extends StatefulWidget {
+  final int year;
+  final String semester;
+  final List<dynamic> courses;
+
+  const CoursePage(
+      {super.key, required this.year, required this.semester, required this.courses});
+
+  @override
+  _CoursePageState createState() => _CoursePageState();
+}
+
+class _CoursePageState extends State<CoursePage> {
+  final List<TextEditingController> courseControllers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 0; i < widget.courses.length; i++) {
+      courseControllers.add(TextEditingController());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${widget.semester} Semester - Year ${widget.year}'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            for (int i = 0; i < widget.courses.length; i++)
+              TextField(
+                controller: courseControllers[i],
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                    labelText: widget.courses[i]["Course Title"]),
+              ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Calculate GPA and navigate to the next page
+                double totalMarks = 0.0;
+                for (int i = 0; i < courseControllers.length; i++) {
+                  double courseMarks =
+                      double.tryParse(courseControllers[i].text) ?? 0.0;
+                  double courseGPA = calculateGPA(courseMarks);
+                  totalMarks += courseGPA;
+                }
+                double totalGPA = totalMarks / courseControllers.length;
+
+                // Navigate to the CGPA page
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CGPAPage(gpa: totalGPA),
+                  ),
+                );
+              },
+              child: const Text('Calculate GPA'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  double calculateGPA(double marks) {
+    if (marks >= 80) {
+      return 4.0;
+    } else if (marks >= 75) {
+      return 3.75;
+    } else if (marks >= 70) {
+      return 3.50;
+    } else if (marks >= 65) {
+      return 3.25;
+    } else if (marks >= 60) {
+      return 3.00;
+    } else if (marks >= 55) {
+      return 2.75;
+    } else if (marks >= 50) {
+      return 2.50;
+    } else if (marks >= 45) {
+      return 2.25;
+    } else if (marks >= 40) {
+      return 2.00;
+    } else {
+      return 0.00;
+    }
+  }
+}
+
+class CGPAPage extends StatelessWidget {
+  final double gpa;
+
+  const CGPAPage({super.key, required this.gpa});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('CGPA Calculation'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Your GPA: $gpa'),
+          ],
+        ),
+      ),
     );
   }
 }
